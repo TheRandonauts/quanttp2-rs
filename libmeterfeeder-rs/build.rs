@@ -1,6 +1,4 @@
 fn main() {
-    // tell rustc to link with some libhello.a library
-    println!("cargo:rustc-link=:libmeterfeeder.so");
-    // and it should search the Cargo.toml directory for that library
-    println!("cargo:rustc-link-search={}", std::env::var("CARGO_MANIFEST_DIR").unwrap());
+    println!("cargo:rustc-link-search=native={}", std::env::var("CARGO_MANIFEST_DIR").unwrap());
+    println!("cargo:rustc-link-lib=dylib=meterfeeder");
 }

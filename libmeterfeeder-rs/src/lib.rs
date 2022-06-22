@@ -1,7 +1,6 @@
 use libc::{ c_char, c_uchar, c_double};
 #[allow(unused)]
 
-#[link(name = ":./libmeterfeeder.so")]
 extern {
     fn MF_Initialize(pErrorReason: *mut c_char) -> i32;
     fn MF_Shutdown()->();
@@ -23,7 +22,6 @@ mod tests {
     use std::ffi::CString;
     #[test]
     fn it_works() {
-        let result = 2 + 2;
 
         let c_string = CString::new("foo").expect("CString::new failed");
         let ptr = c_string.into_raw();
