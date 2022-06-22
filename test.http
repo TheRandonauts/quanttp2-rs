@@ -1,0 +1,50 @@
+GET http://localhost:3000/api/reset
+
+###
+GET http://localhost:3000/api/clear
+
+###
+GET http://localhost:3000/api/status
+
+###
+GET http://localhost:3000/api/devices
+
+###
+
+GET http://localhost:3000/api/randint32
+
+###
+
+GET http://localhost:3000/api/randuniform
+
+###
+
+GET http://localhost:3000/api/randnormal
+
+###
+
+GET http://localhost:3000/api/randbase64
+
+###
+
+GET http://localhost:3000/api/devices
+
+###
+
+GET http://localhost:3000/api/json/randint32
+
+###
+
+GET http://localhost:3000/api/json/randuniform
+
+###
+
+GET http://localhost:3000/api/json/randnormal
+
+###
+
+GET http://localhost:3000/api/json/randbase64
+
+###
+
+GET http://localhost:3000/api/json/devices

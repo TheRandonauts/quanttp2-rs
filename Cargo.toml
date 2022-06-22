@@ -1,0 +1,21 @@
+[package]
+name = "pod-entropy-oxidized"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+axum = "0.5.9"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0.81"
+tokio = { version = "1.0", features = ["full"] }
+tower = { version = "0.4", features = ["util", "timeout"] }
+tower-http = { version = "0.3.0", features = ["add-extension", "trace"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+uuid = { version = "1.0", features = ["serde", "v4"] }
+validator = { version = "0.14.0", features = ["derive"] }
+async-trait = "0.1"
+http-body = "0.4.3"
+thiserror = "1.0.29"
