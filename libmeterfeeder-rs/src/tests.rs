@@ -5,7 +5,6 @@ mod tests {
 
     #[test]
     fn wrapper_init_test(){
-        println!("Here");
         MeterFeederInstance::new().expect("Failed to create instance");
     }
 
