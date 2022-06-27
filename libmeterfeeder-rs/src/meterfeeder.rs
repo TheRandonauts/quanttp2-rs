@@ -8,7 +8,7 @@ pub struct MeterFeederInstance;
 
 impl MeterFeederInstance {
     pub fn new() -> Result<MeterFeeder, MeterfeederErr> {
-        return MeterFeederInstance::init();
+        MeterFeederInstance::init()
     }
     pub fn init()->Result<MeterFeeder, MeterfeederErr>{
         let mut mf_error = [0i8; 256];
@@ -65,7 +65,7 @@ impl MeterFeeder {
     
     pub fn get_number_generators(&mut self) -> i32 {
         unsafe {
-            return MF_GetNumberGenerators();
+            MF_GetNumberGenerators()
         }
     }
 

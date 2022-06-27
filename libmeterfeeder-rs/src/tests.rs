@@ -42,7 +42,7 @@ mod tests {
     #[test]
     fn wrapper_list_gen(){
         let mut instance= MeterFeederInstance::new().expect("Failed to create instance");
-        assert!(instance.list_generators().is_empty() == false, "No generators list returned");
+        assert!(!instance.list_generators().is_empty(), "No generators list returned");
     }
 
     #[test]
