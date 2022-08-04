@@ -16,7 +16,7 @@
 use axum::{
     error_handling::HandleErrorLayer,
     http::StatusCode,
-    Router,
+    Router, Extension,
 };
 use std::{
     net::SocketAddr,
@@ -26,6 +26,13 @@ use tower::{BoxError, ServiceBuilder};
 use tower_http::trace::TraceLayer;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 use crate::api::api_routes;
+
+
+use std::sync::Arc;
+use libmeterfeeder_rs::meterfeeder::{MeterFeederInstance, MeterFeeder};
+struct AppState {
+    meterfeeder_handle: tokio::sync::Mutex<MeterFeeder>
+}
 
 mod api;
 mod util;
@@ -38,6 +45,11 @@ async fn main() {
         ))
         .with(tracing_subscriber::fmt::layer())
         .init();
+    
+    let instance= MeterFeederInstance::new().expect("Failed to create instance");
+    let shared_state = Arc::new(AppState { meterfeeder_handle: tokio::sync::Mutex::new(instance) });
+
+    
 
     // Compose the routes
     let app = Router::new()
@@ -57,6 +69,7 @@ async fn main() {
                 }))
                 .timeout(Duration::from_secs(10))
                 .layer(TraceLayer::new_for_http())
+                .layer(Extension(shared_state))
                 .into_inner(),
         );
 

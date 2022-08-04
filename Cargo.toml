@@ -19,3 +19,5 @@ validator = { version = "0.14.0", features = ["derive"] }
 async-trait = "0.1"
 http-body = "0.4.3"
 thiserror = "1.0.29"
+libmeterfeeder-rs = {path = "./libmeterfeeder-rs"}
+base64 ="0.13.0"

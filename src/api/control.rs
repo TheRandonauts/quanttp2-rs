@@ -1,6 +1,8 @@
-use axum::{response::IntoResponse, http::StatusCode, Router, routing::get, Json};
+use std::sync::Arc;
+
+use axum::{response::IntoResponse, http::StatusCode, Router, routing::get, Json, Extension};
 use serde_json::json;
-use crate::util::ValidatedQuery;
+use crate::{util::ValidatedQuery, AppState};
 
 use super::util::{ControlParamsDeviceId, SERVER_NAME};
 
@@ -17,14 +19,27 @@ async fn status() -> Result<impl IntoResponse, StatusCode> {
 }
 
 /// /reset
-async fn reset() -> Result<impl IntoResponse, StatusCode> {
-    Ok(StatusCode::from_u16(204).unwrap())
+async fn reset(Extension(state): Extension<Arc<AppState>>) -> Result<impl IntoResponse, StatusCode> {
+    let mut handle = state.meterfeeder_handle.lock().await;
+    match handle.reset() {
+        Ok(x) => Ok(Json(x.to_string())),
+        Err(e) => {
+            eprintln!("{:?}", e);
+            Err(StatusCode::INTERNAL_SERVER_ERROR)
+        },
+    }
 }
 
 
 /// /clear
-async fn clear(ValidatedQuery(ControlParamsDeviceId{device_id}): ValidatedQuery<ControlParamsDeviceId>) -> Result<impl IntoResponse, StatusCode> {
+async fn clear(ValidatedQuery(ControlParamsDeviceId{device_id}): ValidatedQuery<ControlParamsDeviceId>, Extension(state): Extension<Arc<AppState>>) -> Result<impl IntoResponse, StatusCode> {
     println!("{device_id:?}");
-    Ok(StatusCode::from_u16(204).unwrap())
-
+    let mut handle = state.meterfeeder_handle.lock().await;
+    match handle.clear(&device_id) {
+        Ok(x) => Ok(Json(x)),
+        Err(e) => {
+            eprintln!("{:?}", e);
+            Err(StatusCode::INTERNAL_SERVER_ERROR)
+        },
+    }
 }

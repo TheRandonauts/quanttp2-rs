@@ -1,5 +1,7 @@
-use crate::util::ValidatedQuery;
-use axum::{http::StatusCode, response::IntoResponse, routing::get, Json, Router};
+use std::sync::Arc;
+
+use crate::{util::ValidatedQuery, AppState};
+use axum::{http::StatusCode, response::IntoResponse, routing::get, Json, Router, Extension};
 use serde_json::json;
 
 use super::util::{ControlParamsDeviceId, ControlParams, SERVER_NAME};
@@ -14,55 +16,90 @@ pub fn routes() -> Router {
         .route("/randbytes", get(randbytes))
         .route("/devices", get(devices))
 }
+
 /// /devices
-async fn devices() -> Result<impl IntoResponse, StatusCode> {
-    Ok(Json(json!({ "server": SERVER_NAME })))
+async fn devices(Extension(state): Extension<Arc<AppState>>) -> Result<impl IntoResponse, StatusCode> {
+    let handle = state.meterfeeder_handle.lock().await;
+    Ok(Json(handle.list_generators()))
 }
 
 /// /randint32
-async fn randint32(
-    ValidatedQuery(ControlParamsDeviceId { device_id }): ValidatedQuery<ControlParamsDeviceId>,
-) -> Result<impl IntoResponse, StatusCode> {
+async fn randint32(ValidatedQuery(ControlParamsDeviceId{device_id}): ValidatedQuery<ControlParamsDeviceId>, Extension(state): Extension<Arc<AppState>>) -> Result<impl IntoResponse, StatusCode> {
     println!("{device_id:?}");
-    Ok(Json(json!({ "server": SERVER_NAME })))
+    let mut handle = state.meterfeeder_handle.lock().await;
+    match handle.rand_int_32(&device_id) {
+        Ok(x) => Ok(Json(x.to_string())),
+        Err(e) => {
+            eprintln!("{:?}", e);
+            Err(StatusCode::INTERNAL_SERVER_ERROR)
+        },
+    }
 }
 
 /// /randuniform
-async fn randuniform(
-    ValidatedQuery(ControlParamsDeviceId { device_id }): ValidatedQuery<ControlParamsDeviceId>,
-) -> Result<impl IntoResponse, StatusCode> {
+async fn randuniform(ValidatedQuery(ControlParamsDeviceId{device_id}): ValidatedQuery<ControlParamsDeviceId>, Extension(state): Extension<Arc<AppState>>) -> Result<impl IntoResponse, StatusCode> {
     println!("{device_id:?}");
-    Ok(Json(json!({ "server": SERVER_NAME })))
+    let mut handle = state.meterfeeder_handle.lock().await;
+    match handle.rand_uniform(&device_id) {
+        Ok(x) => Ok(Json(x.to_string())),
+        Err(e) => {
+            eprintln!("{:?}", e);
+            Err(StatusCode::INTERNAL_SERVER_ERROR)
+        },
+    }
 }
 
+
 /// /randnormal
-async fn randnormal(
-    ValidatedQuery(ControlParams { device_id, length }): ValidatedQuery<ControlParams>,
-) -> Result<impl IntoResponse, StatusCode> {
+async fn randnormal(ValidatedQuery(ControlParams{device_id, length}): ValidatedQuery<ControlParams>, Extension(state): Extension<Arc<AppState>>) -> Result<impl IntoResponse, StatusCode> {
     println!("{device_id:?}, {length:?}");
-    Ok(Json(json!({ "server": SERVER_NAME })))
+    let mut handle = state.meterfeeder_handle.lock().await;
+    match handle.rand_normal(&device_id) {
+        Ok(x) => Ok(Json(x.to_string())),
+        Err(e) => {
+            eprintln!("{:?}", e);
+            Err(StatusCode::INTERNAL_SERVER_ERROR)
+        },
+    }
 }
 
 /// /randhex
-async fn randhex(
-    ValidatedQuery(ControlParams { device_id, length }): ValidatedQuery<ControlParams>,
-) -> Result<impl IntoResponse, StatusCode> {
+async fn randhex(ValidatedQuery(ControlParams{device_id, length}): ValidatedQuery<ControlParams>, Extension(state): Extension<Arc<AppState>>) -> Result<impl IntoResponse, StatusCode> {
     println!("{device_id:?}, {length:?}");
-    Ok(Json(json!({ "server": SERVER_NAME })))
+    let mut handle = state.meterfeeder_handle.lock().await;
+    match handle.get_bytes(length,&device_id) {
+        Ok(buff) => Ok(Json(format!("{:X?}",buff))),
+        Err(e) => {
+            eprintln!("{:?}", e);
+            Err(StatusCode::INTERNAL_SERVER_ERROR)
+        },
+    }
 }
 
-/// /randbase64
-async fn randbase64(
-    ValidatedQuery(ControlParams { device_id, length }): ValidatedQuery<ControlParams>,
-) -> Result<impl IntoResponse, StatusCode> {
-    println!("{device_id:?}, {length:?}");
-    Ok(Json(json!({ "server": SERVER_NAME })))
-}
 
 /// /randbase64
-async fn randbytes(
-    ValidatedQuery(ControlParams { device_id, length }): ValidatedQuery<ControlParams>,
-) -> Result<impl IntoResponse, StatusCode> {
+async fn randbase64(ValidatedQuery(ControlParams{device_id, length}): ValidatedQuery<ControlParams>, Extension(state): Extension<Arc<AppState>>) -> Result<impl IntoResponse, StatusCode> {
     println!("{device_id:?}, {length:?}");
-    Ok(Json(json!({ "server": SERVER_NAME })))
+    let mut handle = state.meterfeeder_handle.lock().await;
+    match handle.get_bytes(length,&device_id) {
+        Ok(buff) => Ok(Json(base64::encode(buff))),
+        Err(e) => {
+            eprintln!("{:?}", e);
+            Err(StatusCode::INTERNAL_SERVER_ERROR)
+        },
+    }
+}
+
+
+/// /randbase64
+async fn randbytes(ValidatedQuery(ControlParams{device_id, length}): ValidatedQuery<ControlParams>, Extension(state): Extension<Arc<AppState>>) -> Result<impl IntoResponse, StatusCode> {
+    println!("{device_id:?}, {length:?}");
+    let mut handle = state.meterfeeder_handle.lock().await;
+    match handle.get_bytes(length,&device_id) {
+        Ok(buff) => Ok(Json(buff)),
+        Err(e) => {
+            eprintln!("{:?}", e);
+            Err(StatusCode::INTERNAL_SERVER_ERROR)
+        },
+    }
 }

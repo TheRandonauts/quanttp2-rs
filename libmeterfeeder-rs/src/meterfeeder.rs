@@ -66,13 +66,13 @@ impl MeterFeeder {
         }
     }
     
-    pub fn get_number_generators(&mut self) -> i32 {
+    pub fn get_number_generators(&self) -> i32 {
         unsafe {
             MF_GetNumberGenerators()
         }
     }
 
-    pub fn list_generators(&mut self) -> Vec<String> {
+    pub fn list_generators(&self) -> Vec<String> {
         // initialize a vector with 58 items long char* with length `get_number_generators`
         let mut generators_list = vec![ [0i8; GENERATOR_BUFF_SIZE].as_mut_ptr(); self.get_number_generators().try_into().unwrap()];
         unsafe{

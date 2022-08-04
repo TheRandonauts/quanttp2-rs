@@ -5,7 +5,7 @@ use validator::Validate;
 pub struct ControlParams {
     #[validate(length( equal = 8, message = "Requires 8 digit serial"))]
     pub device_id: String,
-    pub length: u32,
+    pub length: i32,
 }
 
 

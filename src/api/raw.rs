@@ -1,5 +1,7 @@
-use axum::{response::IntoResponse, http::StatusCode, Router, routing::get};
-use crate::util::ValidatedQuery;
+use std::sync::Arc;
+
+use axum::{response::IntoResponse, http::StatusCode, Router, routing::get, Extension};
+use crate::{util::ValidatedQuery, AppState};
 
 use super::util::{ControlParamsDeviceId, ControlParams};
 
@@ -15,46 +17,89 @@ pub fn routes() -> Router {
 }
 
 /// /devices
-async fn devices() -> Result<impl IntoResponse, StatusCode> {
-    Ok("")
+async fn devices(Extension(state): Extension<Arc<AppState>>) -> Result<impl IntoResponse, StatusCode> {
+    let handle = state.meterfeeder_handle.lock().await;
+    Ok(handle.list_generators().join(","))
 }
 
 
 /// /randint32
-async fn randint32(ValidatedQuery(ControlParamsDeviceId{device_id}): ValidatedQuery<ControlParamsDeviceId>) -> Result<impl IntoResponse, StatusCode> {
+async fn randint32(ValidatedQuery(ControlParamsDeviceId{device_id}): ValidatedQuery<ControlParamsDeviceId>, Extension(state): Extension<Arc<AppState>>) -> Result<impl IntoResponse, StatusCode> {
     println!("{device_id:?}");
-    Ok("")
+    let mut handle = state.meterfeeder_handle.lock().await;
+    match handle.rand_int_32(&device_id) {
+        Ok(x) => Ok(x.to_string()),
+        Err(e) => {
+            eprintln!("{:?}", e);
+            Err(StatusCode::INTERNAL_SERVER_ERROR)
+        },
+    }
 }
 
 /// /randuniform
-async fn randuniform(ValidatedQuery(ControlParamsDeviceId{device_id}): ValidatedQuery<ControlParamsDeviceId>) -> Result<impl IntoResponse, StatusCode> {
+async fn randuniform(ValidatedQuery(ControlParamsDeviceId{device_id}): ValidatedQuery<ControlParamsDeviceId>, Extension(state): Extension<Arc<AppState>>) -> Result<impl IntoResponse, StatusCode> {
     println!("{device_id:?}");
-    Ok("")
+    let mut handle = state.meterfeeder_handle.lock().await;
+    match handle.rand_uniform(&device_id) {
+        Ok(x) => Ok(x.to_string()),
+        Err(e) => {
+            eprintln!("{:?}", e);
+            Err(StatusCode::INTERNAL_SERVER_ERROR)
+        },
+    }
 }
 
 
 /// /randnormal
-async fn randnormal(ValidatedQuery(ControlParams{device_id, length}): ValidatedQuery<ControlParams>) -> Result<impl IntoResponse, StatusCode> {
+async fn randnormal(ValidatedQuery(ControlParams{device_id, length}): ValidatedQuery<ControlParams>, Extension(state): Extension<Arc<AppState>>) -> Result<impl IntoResponse, StatusCode> {
     println!("{device_id:?}, {length:?}");
-    Ok("")
+    let mut handle = state.meterfeeder_handle.lock().await;
+    match handle.rand_normal(&device_id) {
+        Ok(x) => Ok(x.to_string()),
+        Err(e) => {
+            eprintln!("{:?}", e);
+            Err(StatusCode::INTERNAL_SERVER_ERROR)
+        },
+    }
 }
 
 /// /randhex
-async fn randhex(ValidatedQuery(ControlParams{device_id, length}): ValidatedQuery<ControlParams>) -> Result<impl IntoResponse, StatusCode> {
+async fn randhex(ValidatedQuery(ControlParams{device_id, length}): ValidatedQuery<ControlParams>, Extension(state): Extension<Arc<AppState>>) -> Result<impl IntoResponse, StatusCode> {
     println!("{device_id:?}, {length:?}");
-    Ok("")
+    let mut handle = state.meterfeeder_handle.lock().await;
+    match handle.get_bytes(length,&device_id) {
+        Ok(buff) => Ok(format!("{:X?}",buff)),
+        Err(e) => {
+            eprintln!("{:?}", e);
+            Err(StatusCode::INTERNAL_SERVER_ERROR)
+        },
+    }
 }
 
 
 /// /randbase64
-async fn randbase64(ValidatedQuery(ControlParams{device_id, length}): ValidatedQuery<ControlParams>) -> Result<impl IntoResponse, StatusCode> {
+async fn randbase64(ValidatedQuery(ControlParams{device_id, length}): ValidatedQuery<ControlParams>, Extension(state): Extension<Arc<AppState>>) -> Result<impl IntoResponse, StatusCode> {
     println!("{device_id:?}, {length:?}");
-    Ok("")
+    let mut handle = state.meterfeeder_handle.lock().await;
+    match handle.get_bytes(length,&device_id) {
+        Ok(buff) => Ok(base64::encode(buff)),
+        Err(e) => {
+            eprintln!("{:?}", e);
+            Err(StatusCode::INTERNAL_SERVER_ERROR)
+        },
+    }
 }
 
 
 /// /randbase64
-async fn randbytes(ValidatedQuery(ControlParams{device_id, length}): ValidatedQuery<ControlParams>) -> Result<impl IntoResponse, StatusCode> {
+async fn randbytes(ValidatedQuery(ControlParams{device_id, length}): ValidatedQuery<ControlParams>, Extension(state): Extension<Arc<AppState>>) -> Result<impl IntoResponse, StatusCode> {
     println!("{device_id:?}, {length:?}");
-    Ok("")
+    let mut handle = state.meterfeeder_handle.lock().await;
+    match handle.get_bytes(length,&device_id) {
+        Ok(buff) => Ok(buff),
+        Err(e) => {
+            eprintln!("{:?}", e);
+            Err(StatusCode::INTERNAL_SERVER_ERROR)
+        },
+    }
 }
