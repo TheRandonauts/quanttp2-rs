@@ -1,5 +1,4 @@
 use libc::{ c_char, c_uchar, c_double};
-#[allow(unused)]
 
 extern {
     pub fn MF_Initialize(pErrorReason: *mut c_char) -> i32;
