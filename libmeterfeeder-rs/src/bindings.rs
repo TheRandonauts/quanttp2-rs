@@ -1,5 +1,7 @@
 use libc::{ c_char, c_uchar, c_double};
 
+// https://stackoverflow.com/a/40834178/5775114
+#[link(name = ":./libmeterfeeder.so")]
 extern {
     pub fn MF_Initialize(pErrorReason: *mut c_char) -> i32;
     pub fn MF_Shutdown();
