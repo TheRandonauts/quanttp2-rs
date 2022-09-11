@@ -5,7 +5,7 @@ After=network.target
 [Service]
 User=root
 Environment="PORT=33565"
-ExecStart=/home/taha/pod-entropy-oxidized/target/release/pod-entropy-oxidized
+ExecStart=/home/taha/pod-entropy-oxidized/target/debug/pod-entropy-oxidized
 Restart=always
 
 [Install]

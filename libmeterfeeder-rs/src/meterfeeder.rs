@@ -84,8 +84,10 @@ impl MeterFeeder {
             .filter(|generator| core::slice::from_raw_parts(*generator, GENERATOR_BUFF_SIZE) != EMPTY_GENERATOR_BUFF)
             .map(
                 |generator| 
-                    CStr::from_ptr(generator).to_string_lossy().to_string()
+                    CStr::from_ptr(generator).to_str()
             )
+            .filter_map(Result::ok)
+            .map(|generator| generator[..8].to_string())
             .collect::<Vec<String>>()
         }
     }
