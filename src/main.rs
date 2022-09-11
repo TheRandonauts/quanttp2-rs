@@ -72,9 +72,9 @@ async fn main() {
                 .layer(Extension(shared_state))
                 .into_inner(),
         );
-
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
-    tracing::debug!("listening on {}", addr);
+    let port = std::env::var("PORT").unwrap_or_else(|_| "3000".into()).parse::<u16>().unwrap_or(3000);
+    let addr = SocketAddr::from(([0, 0, 0, 0], port));
+    println!("QRNG listening on {}", addr);
     axum::Server::bind(&addr)
         .serve(app.into_make_service())
         .await
