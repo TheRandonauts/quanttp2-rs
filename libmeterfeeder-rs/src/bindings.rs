@@ -9,6 +9,7 @@ extern {
     pub fn MF_Clear(generatorSerialNumber: *const c_char, pErrorReason: *mut c_char)->bool;
     pub fn MF_GetNumberGenerators()->i32;
     pub fn MF_GetListGenerators(pGenerators: *mut *mut c_char);
+    pub fn MF_GetSerialListGenerators(pGenerators: *mut *mut c_char);
     pub fn MF_GetBytes(length: i32, buffer: *mut c_uchar, generatorSerialNumber: *const c_char, pErrorReason: *mut c_char);
     pub fn MF_GetByte(generatorSerialNumber: *const c_char, pErrorReason: *mut c_char)->c_uchar;
     pub fn MF_RandInt32(generatorSerialNumber: *const c_char, pErrorReason: *mut c_char)->i32;

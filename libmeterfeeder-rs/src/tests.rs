@@ -5,7 +5,7 @@ mod tests {
 
     #[test]
     fn wrapper_init_test(){
-        MeterFeederInstance::new().expect("Failed to create instance");
+        MeterFeederInstance::new().expect("Failed to create instance").shutdown();
     }
 
     #[test]
@@ -18,6 +18,7 @@ mod tests {
     fn wrapper_reset_test(){
         let mut instance= MeterFeederInstance::new().expect("Failed to create instance");
         instance.reset().expect("Failed to reset devices");
+        instance.shutdown();
     }
 
 
@@ -25,12 +26,14 @@ mod tests {
     fn wrapper_get_gen(){
         let mut instance= MeterFeederInstance::new().expect("Failed to create instance");
         assert!(instance.get_number_generators() > 0, "No generators found");
+        instance.shutdown();
     }
 
     #[test]
     fn wrapper_list_gen(){
         let mut instance= MeterFeederInstance::new().expect("Failed to create instance");
         assert!(!instance.list_generators().is_empty(), "No generators list returned");
+        instance.shutdown();
     }
 
     #[test]
@@ -41,6 +44,7 @@ mod tests {
         let generators = instance.list_generators();
         let generator = generators.get(GENERATOR_INDEX).expect("Failed to get generator");
         assert!(instance.get_bytes(BUFFER_LENGTH, generator).expect("Failed to get bytes") != vec![0;BUFFER_LENGTH.try_into().unwrap()], "No generators list returned");
+        instance.shutdown();
     }
 
     #[test]
@@ -50,6 +54,7 @@ mod tests {
         let generators = instance.list_generators();
         let generator = generators.get(GENERATOR_INDEX).expect("Failed to get generator");
         assert!(instance.get_byte(generator).expect("Failed to get bytes") != 0, "No generators list returned");
+        instance.shutdown();
     }
 
 
@@ -60,6 +65,7 @@ mod tests {
         let generators = instance.list_generators();
         let generator = generators.get(GENERATOR_INDEX).expect("Failed to get generator");
         assert!(instance.rand_int_32(generator).expect("Failed to get bytes") != 0, "No generators list returned");
+        instance.shutdown();
     }
 
     #[test]
@@ -70,6 +76,7 @@ mod tests {
         let generator = generators.get(GENERATOR_INDEX).expect("Failed to get generator");
         // Test is naive just checking against 0
         assert!(instance.rand_uniform(generator).expect("Failed to get bytes") > 0 as f64, "No generators list returned");
+        instance.shutdown();
     }
 
     #[test]
@@ -80,6 +87,7 @@ mod tests {
         let generator = generators.get(GENERATOR_INDEX).expect("Failed to get generator");
         // Test is naive just checking against 0
         assert!(instance.rand_normal(generator).expect("Failed to get bytes") > 0 as f64, "No generators list returned");
+        instance.shutdown();
     }
 
 
