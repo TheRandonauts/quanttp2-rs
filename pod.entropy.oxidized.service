@@ -1,0 +1,12 @@
+[Unit]
+Description=QRNG Service written in rust
+After=network.target
+
+[Service]
+User=root
+Environment="PORT=33565"
+ExecStart=/home/taha/pod-entropy-oxidized/target/release/pod-entropy-oxidized
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

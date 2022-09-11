@@ -5,6 +5,10 @@ Compile
 $ cargo build
 ```
 
+Install
+```
+$ sudo cp ./libmeterfeed.so /usr/lib 
+```
 
 Test
 ```
