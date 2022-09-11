@@ -16,7 +16,7 @@ pub fn routes() -> Router {
 /// /status
 async fn status(Extension(state): Extension<Arc<AppState>>) -> Result<impl IntoResponse, StatusCode> {
     let uptime = get_current_time() - state.start_ts;
-    Ok(Json(json!({"server": gethostname(), "status": true, "uptime": uptime.as_secs()})))
+    Ok(Json(json!({"server": gethostname().to_str().unwrap(), "status": true, "uptime": uptime.as_secs()})))
 }
 
 /// /reset
