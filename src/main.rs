@@ -20,7 +20,7 @@ use axum::{
 };
 use std::{
     net::SocketAddr,
-    time::Duration,
+    time::{Duration, SystemTime, UNIX_EPOCH},
 };
 use tower::{BoxError, ServiceBuilder};
 use tower_http::trace::TraceLayer;
@@ -31,7 +31,8 @@ use crate::api::api_routes;
 use std::sync::Arc;
 use libmeterfeeder_rs::meterfeeder::{MeterFeederInstance, MeterFeeder};
 struct AppState {
-    meterfeeder_handle: tokio::sync::Mutex<MeterFeeder>
+    meterfeeder_handle: tokio::sync::Mutex<MeterFeeder>,
+    start_ts: Duration
 }
 
 mod api;
@@ -45,9 +46,13 @@ async fn main() {
         ))
         .with(tracing_subscriber::fmt::layer())
         .init();
+
+    let start_ts = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("Time went backwards");
     
     let instance= MeterFeederInstance::new().expect("Failed to create instance");
-    let shared_state = Arc::new(AppState { meterfeeder_handle: tokio::sync::Mutex::new(instance) });
+    let shared_state = Arc::new(AppState { meterfeeder_handle: tokio::sync::Mutex::new(instance), start_ts });
 
     
 

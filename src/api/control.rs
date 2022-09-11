@@ -1,10 +1,10 @@
-use std::sync::Arc;
+use std::{sync::Arc};
 
 use axum::{response::IntoResponse, http::StatusCode, Router, routing::get, Json, Extension};
 use serde_json::json;
 use crate::{util::ValidatedQuery, AppState};
-
-use super::util::{ControlParamsDeviceId, SERVER_NAME};
+use gethostname::gethostname;
+use super::util::{ControlParamsDeviceId, get_current_time};
 
 pub fn routes() -> Router {
     Router::new()
@@ -14,8 +14,9 @@ pub fn routes() -> Router {
 }
 
 /// /status
-async fn status() -> Result<impl IntoResponse, StatusCode> {
-    Ok(Json(json!({"server": SERVER_NAME, "status": true, "devices": ["༼ つ ◕_◕ ༽つ", "/ᐠ｡ꞈ｡ᐟ\\"]})))
+async fn status(Extension(state): Extension<Arc<AppState>>) -> Result<impl IntoResponse, StatusCode> {
+    let uptime = get_current_time() - state.start_ts;
+    Ok(Json(json!({"server": gethostname(), "status": true, "uptime": uptime.as_secs()})))
 }
 
 /// /reset
@@ -33,7 +34,6 @@ async fn reset(Extension(state): Extension<Arc<AppState>>) -> Result<impl IntoRe
 
 /// /clear
 async fn clear(ValidatedQuery(ControlParamsDeviceId{device_id}): ValidatedQuery<ControlParamsDeviceId>, Extension(state): Extension<Arc<AppState>>) -> Result<impl IntoResponse, StatusCode> {
-    println!("{device_id:?}");
     let mut handle = state.meterfeeder_handle.lock().await;
     match handle.clear(&device_id) {
         Ok(x) => Ok(Json(x)),

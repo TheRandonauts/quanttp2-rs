@@ -1,3 +1,5 @@
+use std::time::{Duration, SystemTime, UNIX_EPOCH};
+
 use serde::Deserialize;
 use validator::Validate;
 
@@ -15,4 +17,9 @@ pub struct ControlParamsDeviceId {
     pub device_id: String,
 }
 
-pub const SERVER_NAME: &str = "Dmitry Muratov";
+
+pub fn get_current_time() -> Duration {
+    SystemTime::now()
+    .duration_since(UNIX_EPOCH)
+    .expect("Time went backwards")
+}

@@ -1,4 +1,4 @@
-use crate::{errors::MeterfeederErr, bindings::{MF_GetSerialListGenerators, MF_Initialize, MF_Shutdown, MF_Reset, MF_Clear, MF_GetNumberGenerators, MF_GetListGenerators, MF_GetBytes, MF_GetByte, MF_RandInt32, MF_RandUniform, MF_RandNormal}};
+use crate::{errors::MeterfeederErr, bindings::{MF_GetListGenerators, MF_Initialize, MF_Shutdown, MF_Reset, MF_Clear, MF_GetNumberGenerators, MF_GetBytes, MF_GetByte, MF_RandInt32, MF_RandUniform, MF_RandNormal}};
 
 use std::ffi::{CString, CStr};
 
@@ -76,7 +76,7 @@ impl MeterFeeder {
         // initialize a vector with 58 items long char* with length `get_number_generators`
         let mut generators_list = vec![ [0i8; GENERATOR_BUFF_SIZE].as_mut_ptr(); self.get_number_generators().try_into().unwrap()];
         unsafe{
-            MF_GetSerialListGenerators(generators_list.as_mut_ptr());
+            MF_GetListGenerators(generators_list.as_mut_ptr());
             // Convert CStr to String
             generators_list
             .into_iter()
