@@ -136,6 +136,7 @@ impl MeterFeeder {
                     complete_buffer.extend_from_slice(&split_buffer);
                     mf_error = EMPTY_ERR_BUFF.clone();
                     if mf_error != EMPTY_ERR_BUFF {
+                        self.clear(generator_serial_number)?;
                         let str_err = CStr::from_ptr(mf_error.as_ptr());
                         return Err(MeterfeederErr::GenericError(
                             str_err.to_string_lossy().to_string(),
@@ -143,6 +144,7 @@ impl MeterFeeder {
                     }
                 }
             }
+            self.clear(generator_serial_number)?;
             // since splitting is just greedy final buffer will be larger and thus needs to be shrunk
             complete_buffer.resize(length, 0);
             Ok(complete_buffer)
@@ -156,6 +158,7 @@ impl MeterFeeder {
                     c_generator_serial_number.as_ptr(),
                     mf_error.as_mut_ptr(),
                 );
+                self.clear(generator_serial_number)?;
                 if mf_error == EMPTY_ERR_BUFF {
                     Ok(buffer)
                 } else {
@@ -174,6 +177,7 @@ impl MeterFeeder {
 
         unsafe {
             let returned = MF_GetByte(c_generator_serial_number.as_ptr(), mf_error.as_mut_ptr());
+            self.clear(generator_serial_number)?;
             if mf_error == EMPTY_ERR_BUFF {
                 Ok(returned)
             } else {
@@ -191,6 +195,7 @@ impl MeterFeeder {
 
         unsafe {
             let returned = MF_RandInt32(c_generator_serial_number.as_ptr(), mf_error.as_mut_ptr());
+            self.clear(generator_serial_number)?;
             if mf_error == EMPTY_ERR_BUFF {
                 Ok(returned)
             } else {
@@ -209,6 +214,7 @@ impl MeterFeeder {
         unsafe {
             let returned =
                 MF_RandUniform(c_generator_serial_number.as_ptr(), mf_error.as_mut_ptr());
+                self.clear(generator_serial_number)?;
             if mf_error == EMPTY_ERR_BUFF {
                 Ok(returned)
             } else {
@@ -226,6 +232,7 @@ impl MeterFeeder {
 
         unsafe {
             let returned = MF_RandNormal(c_generator_serial_number.as_ptr(), mf_error.as_mut_ptr());
+            self.clear(generator_serial_number)?;
             if mf_error == EMPTY_ERR_BUFF {
                 Ok(returned)
             } else {
