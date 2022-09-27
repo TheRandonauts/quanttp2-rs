@@ -1,7 +1,8 @@
-use std::time::{Duration, SystemTime, UNIX_EPOCH};
+use std::{time::{Duration, SystemTime, UNIX_EPOCH}};
 
 use serde::Deserialize;
 use validator::Validate;
+
 
 #[derive(Deserialize, Validate)]
 pub struct ControlParams {
