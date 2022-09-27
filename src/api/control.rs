@@ -16,14 +16,14 @@ pub fn routes() -> Router {
 /// /status
 async fn status(Extension(state): Extension<Arc<AppState>>) -> Result<impl IntoResponse, StatusCode> {
     let uptime = get_current_time() - state.start_ts;
-    Ok(Json(json!({"server": gethostname().to_str().unwrap(), "status": true, "uptime": uptime.as_secs()})))
+    Ok(Json(json!({"server": gethostname().to_str().unwrap(), "status": true, "uptime": uptime.as_secs(), "version": env!("CARGO_PKG_VERSION")})))
 }
 
 /// /reset
 async fn reset(Extension(state): Extension<Arc<AppState>>) -> Result<impl IntoResponse, StatusCode> {
     let mut handle = state.meterfeeder_handle.lock().await;
     match handle.reset() {
-        Ok(x) => Ok(Json(x.to_string())),
+        Ok(x) => Ok(Json(x)),
         Err(e) => {
             eprintln!("{:?}", e);
             Err(StatusCode::INTERNAL_SERVER_ERROR)
