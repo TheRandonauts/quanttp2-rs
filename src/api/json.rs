@@ -26,7 +26,7 @@ async fn devices(Extension(state): Extension<Arc<AppState>>) -> Result<impl Into
 async fn randint32(ValidatedQuery(ControlParamsDeviceId{device_id}): ValidatedQuery<ControlParamsDeviceId>, Extension(state): Extension<Arc<AppState>>) -> Result<impl IntoResponse, StatusCode> {
     let mut handle = state.meterfeeder_handle.lock().await;
     match handle.rand_int_32(&device_id) {
-        Ok(x) => Ok(Json(x.to_string())),
+        Ok(x) => Ok(Json(x)),
         Err(e) => {
             eprintln!("{:?}", e);
             Err(StatusCode::INTERNAL_SERVER_ERROR)
@@ -38,7 +38,7 @@ async fn randint32(ValidatedQuery(ControlParamsDeviceId{device_id}): ValidatedQu
 async fn randuniform(ValidatedQuery(ControlParamsDeviceId{device_id}): ValidatedQuery<ControlParamsDeviceId>, Extension(state): Extension<Arc<AppState>>) -> Result<impl IntoResponse, StatusCode> {
     let mut handle = state.meterfeeder_handle.lock().await;
     match handle.rand_uniform(&device_id) {
-        Ok(x) => Ok(Json(x.to_string())),
+        Ok(x) => Ok(Json(x)),
         Err(e) => {
             eprintln!("{:?}", e);
             Err(StatusCode::INTERNAL_SERVER_ERROR)
@@ -51,7 +51,7 @@ async fn randuniform(ValidatedQuery(ControlParamsDeviceId{device_id}): Validated
 async fn randnormal(ValidatedQuery(ControlParamsDeviceId{device_id}): ValidatedQuery<ControlParamsDeviceId>, Extension(state): Extension<Arc<AppState>>) -> Result<impl IntoResponse, StatusCode> {
     let mut handle = state.meterfeeder_handle.lock().await;
     match handle.rand_normal(&device_id) {
-        Ok(x) => Ok(Json(x.to_string())),
+        Ok(x) => Ok(Json(x)),
         Err(e) => {
             eprintln!("{:?}", e);
             Err(StatusCode::INTERNAL_SERVER_ERROR)
