@@ -1,7 +1,8 @@
 use crate::{
     bindings::{
-        MF_Clear, MF_GetByte, MF_GetBytes, MF_GetListGenerators, MF_GetNumberGenerators,
-        MF_Initialize, MF_RandInt32, MF_RandNormal, MF_RandUniform, MF_Reset, MF_Shutdown,
+        BYTES_LENGTH_LIMIT, MF_Clear, MF_GetByte, MF_GetBytes, MF_GetListGenerators,
+        MF_GetNumberGenerators, MF_Initialize, MF_RandInt32, MF_RandNormal, MF_RandUniform,
+        MF_Reset, MF_Shutdown, BYTES_LENGTH_LIMIT_I32,
     },
     errors::MeterfeederErr,
 };
@@ -109,27 +110,60 @@ impl MeterFeeder {
 
     pub fn get_bytes(
         &mut self,
-        length: i32,
+        length_i32: i32,
         generator_serial_number: &str,
     ) -> Result<Vec<u8>, MeterfeederErr> {
-        let mut buffer: Vec<u8> = vec![0; length.try_into().unwrap()];
+        let length:usize = length_i32.try_into().unwrap();
+        let split_request = length > BYTES_LENGTH_LIMIT;
         let c_generator_serial_number = CString::new(generator_serial_number).unwrap();
-        let mut mf_error = [0i8; ERR_BUFF_SIZE];
 
-        unsafe {
-            MF_GetBytes(
-                length,
-                buffer.as_mut_ptr(),
-                c_generator_serial_number.as_ptr(),
-                mf_error.as_mut_ptr(),
-            );
-            if mf_error == EMPTY_ERR_BUFF {
-                Ok(buffer)
-            } else {
-                let str_err = CStr::from_ptr(mf_error.as_ptr());
-                Err(MeterfeederErr::GenericError(
-                    str_err.to_string_lossy().to_string(),
-                ))
+        if split_request {
+            let mut mf_error = EMPTY_ERR_BUFF.clone();
+
+            // Perform ceiling division
+            let mut iterations = (length+BYTES_LENGTH_LIMIT-1) / BYTES_LENGTH_LIMIT;
+            let mut complete_buffer: Vec<u8> = Vec::with_capacity(length);
+            while iterations != 0 {
+                let mut split_buffer: Vec<u8> = vec![0; BYTES_LENGTH_LIMIT];
+                unsafe {
+                    MF_GetBytes(
+                        BYTES_LENGTH_LIMIT_I32,
+                        split_buffer.as_mut_ptr(),
+                        c_generator_serial_number.as_ptr(),
+                        mf_error.as_mut_ptr(),
+                    );
+                    iterations -= 1;
+                    complete_buffer.extend_from_slice(&split_buffer);
+                    mf_error = EMPTY_ERR_BUFF.clone();
+                    if mf_error != EMPTY_ERR_BUFF {
+                        let str_err = CStr::from_ptr(mf_error.as_ptr());
+                        return Err(MeterfeederErr::GenericError(
+                            str_err.to_string_lossy().to_string(),
+                        ));
+                    }
+                }
+            }
+            // since splitting is just greedy final buffer will be larger and thus needs to be shrunk
+            complete_buffer.resize(length, 0);
+            Ok(complete_buffer)
+        } else {
+            let mut mf_error = EMPTY_ERR_BUFF.clone();
+            let mut buffer: Vec<u8> = vec![0; length];
+            unsafe {
+                MF_GetBytes(
+                    length_i32,
+                    buffer.as_mut_ptr(),
+                    c_generator_serial_number.as_ptr(),
+                    mf_error.as_mut_ptr(),
+                );
+                if mf_error == EMPTY_ERR_BUFF {
+                    Ok(buffer)
+                } else {
+                    let str_err = CStr::from_ptr(mf_error.as_ptr());
+                    Err(MeterfeederErr::GenericError(
+                        str_err.to_string_lossy().to_string(),
+                    ))
+                }
             }
         }
     }
