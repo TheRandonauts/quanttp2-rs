@@ -26,6 +26,7 @@ use tower::{BoxError, ServiceBuilder};
 use tower_http::trace::TraceLayer;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 use crate::api::api_routes;
+use std::process::Command;
 
 
 use std::sync::Arc;
@@ -46,6 +47,12 @@ async fn main() {
         ))
         .with(tracing_subscriber::fmt::layer())
         .init();
+
+    let reset_logs = Command::new("/home/taha/reset")
+        .output()
+        .expect("failed to execute process");
+    
+    println!("Device Reset Status: {}", reset_logs.status.success());
 
     let start_ts = SystemTime::now()
         .duration_since(UNIX_EPOCH)
