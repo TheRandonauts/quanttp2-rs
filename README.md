@@ -84,17 +84,17 @@ QWR70154
 
 `http://localhost:3000/api/status`
 ```Python
->>> {"server":"localhost", "status":true, "uptime":3011319, "version":"0.1.4"}
+{"server":"localhost", "status":true, "uptime":3011319, "version":"0.1.4"}
 ```
 
 `http://localhost:3000/api/json/randhex?length=10&device_id=QWR70154`
 ```Python
->>> "6e0ff2447b5999befd43"
+"6e0ff2447b5999befd43"
 ```
 
 `http://localhost:3000/api/randuniform?length=10&device_id=QWR70154`
 ```Python
->>> 0.5370516731852106
+0.5370516731852106
 ```
 
 
