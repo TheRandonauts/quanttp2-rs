@@ -7,7 +7,7 @@
 <h3 align="center">Quanttp2-rs</h3>
 
   <p align="center">
-  Rust port of the Quanttp 2 Entropy Server / used by Randonautica to serve quantum random numbers
+  Rust port of the <a href="https://github.com/TheRandonauts/quanttp2"> Quanttp 2 Entropy Server</a> / used by Randonautica to serve quantum random numbers
     <br />
     <a href="https://github.com/TheRandonauts/quanttp2-rs/issues">Report Bug</a>
     ·
