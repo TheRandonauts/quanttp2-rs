@@ -1,3 +1,6 @@
+## Install the `rest-client` VS Code extension to use this file
+## https://github.com/Huachao/vscode-restclient
+
 @hostname = localhost
 @port = 3000
 @host = {{hostname}}:{{port}}

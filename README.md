@@ -28,6 +28,74 @@ $ cargo build
 $ cargo run
 ```
 
+## API Endpoints:
+
+`/api/devices`
++ List all connected devices by `device_id`
+
+`/api/status`
++ Provides analytical information regarding servers uptime and version information
+
+`/api/reset`
++ Attempts to reset an unresponsive device
++ Required parameter: `device_id`
+
+`/api/clear`
++ Attempts to clear a device's buffer
++ Required parameter: `device_id`
+
+`/api/randint32`
++ Returns a random 32bit integer
++ Required parameter: `device_id`
+
+`/api/randuniform`
++ Returns a random 32bit uniform floating point number
++ Required parameter: `device_id`
+
+`/api/randnormal`
++ Returns a random number from a normal Gaussian distribution
++ Required parameter: `device_id`
+
+`/api/randhex`
++ Returns `length` amount of random bytes in hexadecimal format
++ Required parameter: `device_id`, `length`
+
+`/api/randbase64`
++ Returns `length` amount of random bytes in Base64 format
++ Required parameter: `device_id`, `length`
+
+### JSON Formatted
+
+Return the same data, but JSON formatted
+
++ `/api/json/devices`
++ `/api/json/randint32`
++ `/api/json/randuniform`
++ `/api/json/randnormal`
++ `/api/json/randbase64`
+
+## Usage Examples
+
+```Python
+http://localhost:3000/api/devices
+
+>>> QWR70154
+```
+```
+http://localhost:3000/api/status
+
+>>> {"server":"localhost", "status":true, "uptime":3011319, "version":"0.1.4"}
+```
+```
+http://localhost:3000/api/json/randhex?length=10&device_id=QWR70154
+
+>>> "6e0ff2447b5999befd43"
+```
+```
+http://localhost:3000/api/randuniform?length=10&device_id=QWR70154
+
+>>> 0.5370516731852106
+```
 
 
 ## Contributing
