@@ -5,6 +5,8 @@ use crate::{util::ValidatedQuery, AppState};
 
 use super::util::{ControlParamsDeviceId, ControlParams};
 
+/// Raw text based API routes,
+/// This is useful for users who do not wish to parse json
 pub fn routes() -> Router {
     Router::new()
     .route("/randint32", get(randint32))

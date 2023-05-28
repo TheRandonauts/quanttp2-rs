@@ -1,18 +1,3 @@
-//! Provides a RESTful web server managing some Todos.
-//!
-//! API will be:
-//!
-//! - `GET /todos`: return a JSON list of Todos.
-//! - `POST /todos`: create a new Todo.
-//! - `PUT /todos/:id`: update a specific Todo.
-//! - `DELETE /todos/:id`: delete a specific Todo.
-//!
-//! Run with
-//!
-//! ```not_rust
-//! cd examples && cargo run -p example-todos
-//! ```
-
 use axum::{
     error_handling::HandleErrorLayer,
     http::StatusCode,
@@ -26,12 +11,13 @@ use tower::{BoxError, ServiceBuilder};
 use tower_http::trace::TraceLayer;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 use crate::api::api_routes;
-use std::process::Command;
 
 
 use std::sync::Arc;
 use libmeterfeeder_rs::meterfeeder::{MeterFeederInstance, MeterFeeder};
+/// Old app state method in Axum
 struct AppState {
+    /// Since the library doesn't lock the device natively we need to implement the locking ourselves
     meterfeeder_handle: tokio::sync::Mutex<MeterFeeder>,
     start_ts: Duration
 }
@@ -47,12 +33,6 @@ async fn main() {
         ))
         .with(tracing_subscriber::fmt::layer())
         .init();
-
-    let reset_logs = Command::new("/home/taha/reset")
-        .output()
-        .expect("failed to execute process");
-    
-    println!("Device Reset Status: {}", reset_logs.status.success());
 
     let start_ts = SystemTime::now()
         .duration_since(UNIX_EPOCH)

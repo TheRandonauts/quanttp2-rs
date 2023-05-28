@@ -1,50 +1,56 @@
-GET http://localhost:3000/api/reset
+@hostname = localhost
+@port = 3000
+@host = {{hostname}}:{{port}}
+@proto = http
+
+
+GET {{proto}}://{{host}}/api/reset
 
 ###
-GET http://localhost:3000/api/clear
+GET {{proto}}://{{host}}/api/clear
 
 ###
-GET http://localhost:3000/api/status
+GET {{proto}}://{{host}}/api/status
 
 ###
-GET http://localhost:3000/api/devices
-
-###
-
-GET http://localhost:3000/api/randint32
-
-###
-
-GET http://localhost:3000/api/randuniform
+GET {{proto}}://{{host}}/api/devices
 
 ###
 
-GET http://localhost:3000/api/randnormal
+GET {{proto}}://{{host}}/api/randint32
 
 ###
 
-GET http://localhost:3000/api/randbase64
+GET {{proto}}://{{host}}/api/randuniform
 
 ###
 
-GET http://localhost:3000/api/devices
+GET {{proto}}://{{host}}/api/randnormal
 
 ###
 
-GET http://localhost:3000/api/json/randint32
+GET {{proto}}://{{host}}/api/randbase64
 
 ###
 
-GET http://localhost:3000/api/json/randuniform
+GET {{proto}}://{{host}}/api/devices
 
 ###
 
-GET http://localhost:3000/api/json/randnormal
+GET {{proto}}://{{host}}/api/json/randint32
 
 ###
 
-GET http://localhost:3000/api/json/randbase64
+GET {{proto}}://{{host}}/api/json/randuniform
 
 ###
 
-GET http://localhost:3000/api/json/devices
+GET {{proto}}://{{host}}/api/json/randnormal
+
+###
+
+GET {{proto}}://{{host}}/api/json/randbase64
+
+###
+
+GET {{proto}}://{{host}}/api/json/devices

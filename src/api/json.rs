@@ -5,6 +5,8 @@ use axum::{http::StatusCode, response::IntoResponse, routing::get, Json, Router,
 
 use super::util::{ControlParamsDeviceId, ControlParams};
 
+/// Json Serialized based API routes,
+/// Much wider accepted method of sending responses
 pub fn routes() -> Router {
     Router::new()
         .route("/randint32", get(randint32))
